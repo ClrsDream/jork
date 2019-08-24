@@ -1,6 +1,7 @@
-package com.xiaoteng.jork.server;
+package com.xiaoteng.jork.server.main;
 
 import com.alibaba.fastjson.JSON;
+import com.xiaoteng.jork.server.auth.Auth;
 import com.xiaoteng.jork.server.messages.request.ActionMessage;
 import com.xiaoteng.jork.server.messages.request.AuthMessage;
 import com.xiaoteng.jork.server.messages.request.RegisterMessage;
@@ -56,11 +57,12 @@ public class Connection implements Runnable {
                             break;
                         case "register":
                             if (isLogin) {
-                                log.info("将当前connection注册到注册表中");
                                 // 登录之后才可以操作
                                 RegisterMessage rm = JSON.parseObject(actionMessage.getContent(), RegisterMessage.class);
                                 // 将当前的connection注册到注册表中
                                 Client client = new Client(rm.getProtocol(), rm.getPort(), rm.getDomain(), this.socket);
+                                log.info("将当前connection注册到注册表中");
+                                RegisterTable.register(client.getPort(), client);
                             }
                             break;
                         default:

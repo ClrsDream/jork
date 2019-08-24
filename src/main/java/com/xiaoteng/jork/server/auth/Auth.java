@@ -1,4 +1,4 @@
-package com.xiaoteng.jork.server;
+package com.xiaoteng.jork.server.auth;
 
 /**
  * @author xiaoteng

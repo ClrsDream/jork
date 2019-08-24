@@ -1,6 +1,6 @@
 package com.xiaoteng.jork;
 
-import com.xiaoteng.jork.server.Server;
+import com.xiaoteng.jork.server.main.Server;
 
 import java.io.IOException;
 
