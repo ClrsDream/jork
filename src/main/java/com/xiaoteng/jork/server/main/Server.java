@@ -1,4 +1,4 @@
-package com.xiaoteng.jork.server;
+package com.xiaoteng.jork.server.main;
 
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
