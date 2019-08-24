@@ -10,8 +10,11 @@ public class RegisterMessage {
     @JSONField(name = "domain")
     private String domain;
 
+    @JSONField(name = "port")
+    private Integer port;
+
     @JSONField(name = "protocol")
-    private String[] protocol;
+    private String protocol;
 
     public String getDomain() {
         return domain;
@@ -21,11 +24,19 @@ public class RegisterMessage {
         this.domain = domain;
     }
 
-    public String[] getProtocol() {
+    public Integer getPort() {
+        return port;
+    }
+
+    public void setPort(Integer port) {
+        this.port = port;
+    }
+
+    public String getProtocol() {
         return protocol;
     }
 
-    public void setProtocol(String[] protocol) {
+    public void setProtocol(String protocol) {
         this.protocol = protocol;
     }
 }
