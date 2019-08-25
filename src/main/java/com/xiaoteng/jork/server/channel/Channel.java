@@ -7,28 +7,28 @@ import java.net.Socket;
  */
 public class Channel {
 
-    private Socket fromSocket;
+    private Socket userSocket;
 
-    private Socket toSocket;
+    private Socket clientSocket;
 
-    public Channel(Socket fromSocket, Socket toSocket) {
-        this.fromSocket = fromSocket;
-        this.toSocket = toSocket;
+    public Channel(Socket userSocket, Socket clientSocket) {
+        this.userSocket = userSocket;
+        this.clientSocket = clientSocket;
     }
 
-    public Socket getFromSocket() {
-        return fromSocket;
+    public Socket getUserSocket() {
+        return userSocket;
     }
 
-    public void setFromSocket(Socket fromSocket) {
-        this.fromSocket = fromSocket;
+    public void setUserSocket(Socket userSocket) {
+        this.userSocket = userSocket;
     }
 
-    public Socket getToSocket() {
-        return toSocket;
+    public Socket getClientSocket() {
+        return clientSocket;
     }
 
-    public void setToSocket(Socket toSocket) {
-        this.toSocket = toSocket;
+    public void setClientSocket(Socket clientSocket) {
+        this.clientSocket = clientSocket;
     }
 }
