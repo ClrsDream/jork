@@ -23,24 +23,18 @@ public class Server {
      * 线程数量
      */
     private final static int THREAD_NUM = 10;
-    /**
-     * 线程池
-     */
-    private ExecutorService executorService;
-
-    public Server() {
-        // 提前创建好线程池
-        this.executorService = Executors.newFixedThreadPool(THREAD_NUM);
-    }
 
     public void run() throws IOException {
+        // 初始化线程池
+        ExecutorService executorService = Executors.newFixedThreadPool(THREAD_NUM);
+
         ServerSocket ss = new ServerSocket(CLIENT_SERVICE_PORT);
         log.info("程序开始运行，监听{}端口中...", CLIENT_SERVICE_PORT);
         while (true) {
             Socket client = ss.accept();
             log.info("收到来自客户端的请求");
             // 提交到线程池里面处理，预防阻塞
-            this.executorService.submit(new Connection(client));
+            executorService.submit(new Connection(client));
         }
     }
 
