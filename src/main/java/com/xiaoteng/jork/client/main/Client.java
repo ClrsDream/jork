@@ -1,7 +1,7 @@
 package com.xiaoteng.jork.client.main;
 
 import com.alibaba.fastjson.JSON;
-import com.xiaoteng.jork.client.main.config.Config;
+import com.xiaoteng.jork.client.config.Config;
 import com.xiaoteng.jork.utils.Helper;
 
 import java.io.IOException;
