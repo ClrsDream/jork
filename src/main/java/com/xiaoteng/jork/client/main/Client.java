@@ -12,6 +12,9 @@ public class Client {
         // 读取配置
         String configStr = Helper.fileGetContent(configFile);
         Config config = JSON.parseObject(configStr, Config.class);
+        // 运行
+        ClientServer clientServer = new ClientServer(config);
+        clientServer.run();
     }
 
 }
