@@ -1,11 +1,13 @@
 package com.xiaoteng.jork.server.servers;
 
 import com.alibaba.fastjson.JSON;
+import com.xiaoteng.jork.constants.Constants;
 import com.xiaoteng.jork.server.channel.Channel;
 import com.xiaoteng.jork.server.channel.ChannelTable;
 import com.xiaoteng.jork.server.main.Client;
 import com.xiaoteng.jork.server.main.RegisterTable;
 import com.xiaoteng.jork.server.messages.response.NewChannelMessage;
+import com.xiaoteng.jork.server.messages.response.ResponseMessage;
 import com.xiaoteng.jork.utils.Helper;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
@@ -67,9 +69,10 @@ public class HttpServer {
 
                             // 写入消息
                             NewChannelMessage ncm = new NewChannelMessage(id);
+                            ResponseMessage rm = new ResponseMessage(Constants.RESPONSE_METHOD_NEW_CHANNEL, JSON.toJSONString(ncm));
                             try {
                                 PrintWriter printWriter = new PrintWriter(client.getSocket().getOutputStream());
-                                String m = JSON.toJSONString(ncm);
+                                String m = JSON.toJSONString(rm);
                                 log.info("向客户端写入数据{}", m);
                                 printWriter.println(m);
                                 printWriter.flush();
