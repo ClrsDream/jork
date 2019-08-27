@@ -1,7 +1,6 @@
 package com.xiaoteng.jork;
 
 import com.xiaoteng.jork.client.main.Client;
-import com.xiaoteng.jork.server.main.Server;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 
@@ -20,24 +19,26 @@ public class App {
 
     public static void main(String[] args) throws IOException {
         System.out.println(JORK);
-        String model = System.getProperty("jork.run.model");
-        String configPath = System.getProperty("jork.client.config");
-        if (model == null || model.isEmpty()){
-            System.out.println("请指定运行模式，es: -Djork.run.model=server");
-            System.exit(1);
-        }
-        if ("server".equals(model)) {
-            // 服务端运行模式
-            Server server = new Server();
-            server.run();
-        } else {
-            if (configPath == null || configPath.isEmpty()) {
-                System.out.println("请指定配置文件路径，es: -Djork.client.config=/home/xiaoteng/jork.json");
-                System.exit(2);
-            }
-            Client client = new Client();
-            client.run(configPath);
-        }
+//        String model = System.getProperty("jork.run.model");
+//        String configPath = System.getProperty("jork.client.config");
+        Client client = new Client();
+        client.run("/Users/xiaoteng/java/jork/config.json");
+//        if (model == null || model.isEmpty()){
+//            System.out.println("请指定运行模式，es: -Djork.run.model=server");
+//            System.exit(1);
+//        }
+//        if ("server".equals(model)) {
+//            // 服务端运行模式
+//            Server server = new Server();
+//            server.run();
+//        } else {
+//            if (configPath == null || configPath.isEmpty()) {
+//                System.out.println("请指定配置文件路径，es: -Djork.client.config=/home/xiaoteng/jork.json");
+//                System.exit(2);
+//            }
+//            Client client = new Client();
+//            client.run(configPath);
+//        }
     }
 
 }

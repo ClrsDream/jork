@@ -16,7 +16,7 @@ public class Helper {
 
     public static String fileGetContent(String path) throws IOException {
         BufferedReader bufferedReader = new BufferedReader(new FileReader(path));
-        StringBuilder sb = null;
+        StringBuilder sb = new StringBuilder();
         String s;
         while ((s = bufferedReader.readLine()) != null) {
             sb.append(s);
