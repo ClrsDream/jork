@@ -4,6 +4,7 @@ import com.alibaba.fastjson.JSON;
 import com.xiaoteng.jork.constants.Constants;
 import com.xiaoteng.jork.messages.ActionMessage;
 import com.xiaoteng.jork.messages.AuthMessage;
+import com.xiaoteng.jork.messages.AuthResultMessage;
 import com.xiaoteng.jork.messages.ClientRegisterMessage;
 import com.xiaoteng.jork.server.auth.Auth;
 import org.apache.logging.log4j.LogManager;
@@ -11,8 +12,8 @@ import org.apache.logging.log4j.Logger;
 
 import java.io.BufferedReader;
 import java.io.IOException;
-import java.io.InputStream;
 import java.io.InputStreamReader;
+import java.io.PrintWriter;
 import java.net.Socket;
 
 /**
@@ -30,10 +31,9 @@ public class Connection implements Runnable {
 
     @Override
     public void run() {
-        InputStream inputStream = null;
         try {
-            inputStream = this.socket.getInputStream();
-            BufferedReader bufferedReader = new BufferedReader(new InputStreamReader(inputStream));
+            BufferedReader bufferedReader = new BufferedReader(new InputStreamReader(this.socket.getInputStream()));
+            PrintWriter printWriter = new PrintWriter(this.socket.getOutputStream());
 
             // 是否登陆
             boolean isLogin = false;
@@ -52,6 +52,13 @@ public class Connection implements Runnable {
                             this.socket.close();
                             return;
                         }
+
+                        // 回传认证消息结果
+                        AuthResultMessage authResultMessage = new AuthResultMessage(true);
+                        ActionMessage actionMessage1 = new ActionMessage(Constants.METHOD_AUTH_RESULT, JSON.toJSONString(authResultMessage));
+                        printWriter.println(JSON.toJSONString(actionMessage1));
+                        printWriter.flush();
+
                         log.info("登录成功");
                         isLogin = true;
                         break;
