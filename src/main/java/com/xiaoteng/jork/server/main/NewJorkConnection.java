@@ -65,12 +65,6 @@ public class NewJorkConnection implements Runnable {
                         log.info("将当前connection注册到注册表中");
                         JorkClientsStorage.add(client);
                         break;
-                    case Constants.RESPONSE_METHOD_NEW_CHANNEL:
-                        // 注册transportClient
-                        RegisterChannelMessage registerChannelMessage = JSON.parseObject(actionMessage.getContent(), RegisterChannelMessage.class);
-                        JorkTransportClientsStorage.add(registerChannelMessage.getId(), this.socket);
-                        log.info("成功建立transportClient的映射");
-                        break;
                     default:
                         log.warn("{} 行为暂不支持", actionMessage.getMethod());
                 }

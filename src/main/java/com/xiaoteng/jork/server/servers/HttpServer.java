@@ -4,17 +4,14 @@ import com.alibaba.fastjson.JSON;
 import com.xiaoteng.jork.constants.Constants;
 import com.xiaoteng.jork.messages.ActionMessage;
 import com.xiaoteng.jork.messages.RegisterChannelMessage;
-import com.xiaoteng.jork.server.main.IoCopy;
 import com.xiaoteng.jork.server.main.JorkClient;
-import com.xiaoteng.jork.server.main.Server;
 import com.xiaoteng.jork.server.storage.JorkClientsStorage;
 import com.xiaoteng.jork.server.storage.JorkTransportClientsStorage;
 import com.xiaoteng.jork.server.storage.LocalClientsStorage;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 
-import java.io.IOException;
-import java.io.PrintWriter;
+import java.io.*;
 import java.net.ServerSocket;
 import java.net.Socket;
 import java.util.concurrent.ExecutorService;
@@ -93,9 +90,13 @@ public class HttpServer {
                         // 到这里，本次的conn与jorkClient的conn已成功关联
                         // 接下来需要监听双方的写入事件，并做同步写入操作
                         log.info("关联通道已建立成功，开启同步写入...");
-                        IoCopy ioCopy = new IoCopy(socket, jorkTransportClient);
-                        executorService.submit(ioCopy::writeToClient);
-                        executorService.submit(ioCopy::writeToLocal);
+                        BufferedReader bufferedReader = new BufferedReader(new InputStreamReader(socket.getInputStream()));
+                        BufferedWriter bufferedWriter = new BufferedWriter(new OutputStreamWriter(jorkTransportClient.getOutputStream()));
+                        int c;
+                        while ((c = bufferedReader.read()) != -1) {
+                            bufferedWriter.write(c);
+                            bufferedWriter.flush();
+                        }
                     } catch (IOException | InterruptedException e) {
                         e.printStackTrace();
                     }
