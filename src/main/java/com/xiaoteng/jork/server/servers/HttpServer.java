@@ -6,6 +6,7 @@ import com.xiaoteng.jork.messages.ActionMessage;
 import com.xiaoteng.jork.messages.RegisterChannelMessage;
 import com.xiaoteng.jork.server.main.IoCopy;
 import com.xiaoteng.jork.server.main.JorkClient;
+import com.xiaoteng.jork.server.main.Server;
 import com.xiaoteng.jork.server.storage.JorkClientsStorage;
 import com.xiaoteng.jork.server.storage.JorkTransportClientsStorage;
 import com.xiaoteng.jork.server.storage.LocalClientsStorage;
@@ -35,8 +36,9 @@ public class HttpServer {
     public void listener() {
         // 线程池
         ExecutorService executorService = Executors.newFixedThreadPool(THREAD_NUM);
+        ServerSocket ss;
         try {
-            ServerSocket ss = new ServerSocket(PORT);
+            ss = new ServerSocket(PORT);
             log.info("监听{}端口", PORT);
             while (true) {
                 Socket socket = ss.accept();
@@ -49,6 +51,7 @@ public class HttpServer {
                         JorkClient jorkClient = JorkClientsStorage.findByDomain(domain);
                         if (jorkClient == null) {
                             // 没有jorkClient注册，直接关闭连接
+                            log.info("当前域名{}未注册", domain);
                             ss.close();
                             return;
                         }
@@ -72,6 +75,7 @@ public class HttpServer {
                             int times = 0;
                             while (times < 20) {
                                 times++;
+                                log.info("开始等待jorkClient发起transport连接，次数{}次", times);
                                 jorkTransportClient = JorkTransportClientsStorage.get(socket.hashCode());
                                 if (jorkTransportClient != null) {
                                     // 已经注册
@@ -80,6 +84,7 @@ public class HttpServer {
                                 Thread.sleep(500);
                             }
                             if (jorkTransportClient == null) {
+                                log.info("jorkClient一直未发起transport的连接");
                                 socket.close();
                                 return;
                             }
@@ -87,6 +92,7 @@ public class HttpServer {
 
                         // 到这里，本次的conn与jorkClient的conn已成功关联
                         // 接下来需要监听双方的写入事件，并做同步写入操作
+                        log.info("关联通道已建立成功，开启同步写入...");
                         IoCopy ioCopy = new IoCopy(socket, jorkTransportClient);
                         executorService.submit(ioCopy::writeToClient);
                         executorService.submit(ioCopy::writeToLocal);
@@ -96,7 +102,6 @@ public class HttpServer {
                 });
             }
         } catch (IOException e) {
-            log.info("无法监听80端口，可能是被占用了");
             e.printStackTrace();
         }
     }
