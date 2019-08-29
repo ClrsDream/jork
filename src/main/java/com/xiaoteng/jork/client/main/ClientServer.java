@@ -71,10 +71,8 @@ public class ClientServer {
                     case Constants.RESPONSE_METHOD_NEW_CHANNEL:
                         // 收到发起新connection的请求
                         RegisterChannelMessage rcm = JSON.parseObject(ms.getContent(), RegisterChannelMessage.class);
-                        IoCopy ioCopy = new IoCopy(config, rcm.getId());
-                        // todo 防止重复注册，做一个id限制
-                        executorService.submit(ioCopy::localSocketHandler);
-                        executorService.submit(ioCopy::serverSocketHandler);
+                        Channel channel = new Channel(rcm.getId(), config);
+                        channel.run();
                         break;
                     default:
                         log.warn("method{}不支持", ms.getMethod());
