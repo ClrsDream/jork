@@ -4,22 +4,22 @@ import com.alibaba.fastjson.JSON;
 import com.xiaoteng.jork.constants.Constants;
 import com.xiaoteng.jork.messages.ActionMessage;
 import com.xiaoteng.jork.messages.RegisterChannelMessage;
-import com.xiaoteng.jork.server.channel.Channel;
-import com.xiaoteng.jork.server.channel.ChannelTable;
-import com.xiaoteng.jork.server.main.Client;
-import com.xiaoteng.jork.server.main.RegisterTable;
-import com.xiaoteng.jork.utils.Helper;
+import com.xiaoteng.jork.server.main.JorkClient;
+import com.xiaoteng.jork.server.storage.JorkClientsStorage;
+import com.xiaoteng.jork.server.storage.JorkTransportClientsStorage;
+import com.xiaoteng.jork.server.storage.LocalClientsStorage;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 
 import java.io.*;
 import java.net.ServerSocket;
 import java.net.Socket;
-import java.util.ArrayList;
 import java.util.concurrent.ExecutorService;
 import java.util.concurrent.Executors;
 
 /**
+ * HTTP监听服务
+ *
  * @author xiaoteng
  */
 public class HttpServer {
@@ -33,104 +33,78 @@ public class HttpServer {
     public void listener() {
         // 线程池
         ExecutorService executorService = Executors.newFixedThreadPool(THREAD_NUM);
-
+        ServerSocket ss;
         try {
-            ServerSocket ss = new ServerSocket(PORT);
+            ss = new ServerSocket(PORT);
             log.info("监听{}端口", PORT);
             while (true) {
                 Socket socket = ss.accept();
-                log.info("收到新的连接");
+                log.info("收到新的HTTP连接");
                 executorService.submit(() -> {
-                    // 客户来了一个新的连接请求
-                    // 先判断这个请求是否已经注册，注册表是ChannelTable
-                    // 没有注册的先注册，注册完成之后
-                    // 然后让该client重新发起一个connection与此连接建立隧道
-                    // 专门处理本次请求
-
                     try {
-                        Integer userClientId = socket.hashCode();
-                        Channel channel = ChannelTable.getChannel(userClientId);
-                        log.info("channel {}", channel);
-                        if (channel == null) {
-                            // 获取当前用户请求的域名[二级域名]
-                            log.info("当前访问域名{}", socket.getInetAddress().getHostName());
-                            String domain = Helper.getChildDomain(socket.getInetAddress().getHostName());
-                            log.info("解析后的子域名{}", domain);
-
-                            ArrayList<Client> clients = RegisterTable.getClients(PORT);
-                            if (clients != null) {
-                                for (Client client : clients) {
-                                    if (!client.getDomain().equals(domain)) {
-                                        continue;
-                                    }
-                                    // 找到当前请求对应client，这里需要发送一个消息给client
-                                    // 让它重新发起一个connection用来处理本次请求
-                                    log.info("将channel注册到channelTable");
-                                    int id = client.hashCode();
-                                    Channel c = new Channel(socket, null);
-                                    ChannelTable.add(id, c);
-
-                                    // 写入消息
-                                    RegisterChannelMessage rcm = new RegisterChannelMessage(id);
-                                    ActionMessage rm = new ActionMessage(Constants.RESPONSE_METHOD_NEW_CHANNEL, JSON.toJSONString(rcm));
-                                    try {
-                                        PrintWriter printWriter = new PrintWriter(client.getSocket().getOutputStream());
-                                        String m = JSON.toJSONString(rm);
-                                        log.info("向客户端写入数据{}", m);
-                                        printWriter.println(m);
-                                        printWriter.flush();
-                                    } catch (IOException e) {
-                                        log.info("无法获取client的socket的outputStream");
-                                        e.printStackTrace();
-                                    }
-                                }
-                            }
+                        // 获取域名
+                        String domain = socket.getInetAddress().getHostName();
+                        // 查找该域名是否有jorkClient注册
+                        JorkClient jorkClient = JorkClientsStorage.findByDomain(domain);
+                        if (jorkClient == null) {
+                            // 没有jorkClient注册，直接关闭连接
+                            log.info("当前域名{}未注册", domain);
+                            ss.close();
+                            return;
                         }
+                        // 将当前连接存储在本地
+                        LocalClientsStorage.add(socket.hashCode(), socket);
 
-                        try {
-                            // 等待客户端发起连接并注册
+                        // 判断当前的连接是否关联了jorkTransportClient
+                        Socket jorkTransportClient = JorkTransportClientsStorage.get(socket.hashCode());
+                        if (jorkTransportClient == null) {
+                            // 没有关联jorkTransportClient
+                            // 现在需要发一个消息给jorkClient且覆盖上socket.hashCode()
+                            // 然后jorkClient接受到消息之后会重新发起一个连接，且带上socket.hashCode()
+                            // 最后完整一次关联此次conn的注册
+                            log.info("发送消息给jorkClient，让它重新发起一个新的连接，专门用于传输");
+                            RegisterChannelMessage registerChannelMessage = new RegisterChannelMessage(socket.hashCode());
+                            ActionMessage actionMessage = new ActionMessage(Constants.RESPONSE_METHOD_NEW_CHANNEL, JSON.toJSONString(registerChannelMessage));
+                            PrintWriter printWriter = new PrintWriter(jorkClient.getSocket().getOutputStream());
+                            printWriter.println(JSON.toJSONString(actionMessage));
+                            printWriter.flush();
+
+                            // 这里等待10的时间，如果jorkClient没有响应，那么直接终止这个连接
                             int times = 0;
-                            boolean isContinue = true;
-                            while (true) {
+                            while (times < 20) {
                                 times++;
-                                log.info("开始尝试等待jork客户端连接，尝试次数{}次", times);
-                                channel = ChannelTable.getChannel(userClientId);
-                                if (channel != null && channel.getClientSocket() != null) {
-                                    // 说明客户端已经发起了新的连接且已经完成了注册
-                                    break;
-                                }
-                                if (times > 30) {
-                                    // 15s超时，直接退出
-                                    log.warn("jork客户端一直未连接，无法响应");
-                                    isContinue = false;
-                                    socket.close();
+                                log.info("开始等待jorkClient发起transport连接，次数{}次", times);
+                                jorkTransportClient = JorkTransportClientsStorage.get(socket.hashCode());
+                                if (jorkTransportClient != null) {
+                                    // 已经注册
                                     break;
                                 }
                                 Thread.sleep(500);
                             }
-
-                            if (isContinue) {
-                                // 兼容来自用户的请求数据并写入到先关联的客户端
-                                BufferedReader bufferedReader = new BufferedReader(new InputStreamReader(socket.getInputStream()));
-                                int c;
-                                BufferedWriter bufferedWriter = new BufferedWriter(new OutputStreamWriter(channel.getClientSocket().getOutputStream()));
-                                if ((c = bufferedReader.read()) != -1) {
-                                    bufferedWriter.write(c);
-                                }
+                            if (jorkTransportClient == null) {
+                                log.info("jorkClient一直未发起transport的连接");
+                                socket.close();
+                                return;
                             }
-
-                        } catch (IOException | InterruptedException e) {
-                            e.printStackTrace();
                         }
 
-
-                    } catch (Exception e) {
+                        // 到这里，本次的conn与jorkClient的conn已成功关联
+                        // 接下来需要监听双方的写入事件，并做同步写入操作
+                        log.info("关联通道已建立成功，开启同步写入...");
+                        BufferedReader bufferedReader = new BufferedReader(new InputStreamReader(socket.getInputStream()));
+                        PrintWriter printWriter = new PrintWriter(jorkTransportClient.getOutputStream());
+                        String s;
+                        while ((s = bufferedReader.readLine()) != null) {
+                            log.info("收到来自localClient的消息 {}", s);
+                            printWriter.println(s);
+                            printWriter.flush();
+                        }
+                    } catch (IOException | InterruptedException e) {
                         e.printStackTrace();
                     }
                 });
             }
         } catch (IOException e) {
-            log.info("无法监听80端口，可能是被占用了");
             e.printStackTrace();
         }
     }

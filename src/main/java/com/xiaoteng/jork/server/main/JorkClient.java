@@ -7,7 +7,7 @@ import java.net.Socket;
  *
  * @author xiaoteng
  */
-public class Client {
+public class JorkClient {
 
     private String[] protocol;
 
@@ -17,7 +17,7 @@ public class Client {
 
     private Socket socket;
 
-    public Client(String[] protocol, Integer port, String domain, Socket socket) {
+    public JorkClient(String[] protocol, Integer port, String domain, Socket socket) {
         this.protocol = protocol;
         this.port = port;
         this.domain = domain;

@@ -2,11 +2,10 @@ package com.xiaoteng.jork.server.main;
 
 import com.alibaba.fastjson.JSON;
 import com.xiaoteng.jork.constants.Constants;
-import com.xiaoteng.jork.messages.ActionMessage;
-import com.xiaoteng.jork.messages.AuthMessage;
-import com.xiaoteng.jork.messages.AuthResultMessage;
-import com.xiaoteng.jork.messages.ClientRegisterMessage;
+import com.xiaoteng.jork.messages.*;
 import com.xiaoteng.jork.server.auth.Auth;
+import com.xiaoteng.jork.server.storage.JorkClientsStorage;
+import com.xiaoteng.jork.server.storage.JorkTransportClientsStorage;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 
@@ -19,13 +18,13 @@ import java.net.Socket;
 /**
  * @author xiaoteng
  */
-public class Connection implements Runnable {
+public class NewJorkConnection implements Runnable {
 
-    private final static Logger log = LogManager.getLogger(Connection.class);
+    private final static Logger log = LogManager.getLogger(NewJorkConnection.class);
 
     private Socket socket;
 
-    Connection(Socket socket) {
+    NewJorkConnection(Socket socket) {
         this.socket = socket;
     }
 
@@ -34,9 +33,6 @@ public class Connection implements Runnable {
         try {
             BufferedReader bufferedReader = new BufferedReader(new InputStreamReader(this.socket.getInputStream()));
             PrintWriter printWriter = new PrintWriter(this.socket.getOutputStream());
-
-            // 是否登陆
-            boolean isLogin = false;
 
             String line;
             while ((line = bufferedReader.readLine()) != null) {
@@ -59,18 +55,15 @@ public class Connection implements Runnable {
                         printWriter.println(JSON.toJSONString(actionMessage1));
                         printWriter.flush();
 
-                        log.info("登录成功");
-                        isLogin = true;
+                        log.info("认证成功");
                         break;
                     case Constants.METHOD_REGISTER:
-                        if (isLogin) {
-                            // 登录之后才可以操作
-                            ClientRegisterMessage rm = JSON.parseObject(actionMessage.getContent(), ClientRegisterMessage.class);
-                            // 将当前的connection注册到注册表中
-                            Client client = new Client(rm.getProtocol(), rm.getPort(), rm.getDomain(), this.socket);
-                            log.info("将当前connection注册到注册表中");
-                            RegisterTable.register(client.getPort(), client);
-                        }
+                        // todo socket的登录限制
+                        ClientRegisterMessage rm = JSON.parseObject(actionMessage.getContent(), ClientRegisterMessage.class);
+                        // 将当前的connection注册到注册表中
+                        JorkClient client = new JorkClient(rm.getProtocol(), rm.getPort(), rm.getDomain(), this.socket);
+                        log.info("将当前connection注册到注册表中");
+                        JorkClientsStorage.add(client);
                         break;
                     default:
                         log.warn("{} 行为暂不支持", actionMessage.getMethod());
