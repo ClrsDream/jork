@@ -35,6 +35,7 @@ public class ClientServer {
             BufferedReader bufferedReader = new BufferedReader(new InputStreamReader(c.getInputStream()));
             String s;
             while ((s = bufferedReader.readLine()) != null) {
+                log.info("收到消息{}", s);
                 // 空检测
                 if (s.isEmpty()) {
                     continue;
@@ -45,10 +46,8 @@ public class ClientServer {
                 }
 
                 ActionMessage ms = JSON.parseObject(s, ActionMessage.class);
-                log.info("收到消息{}", ms.getContent());
                 switch (ms.getMethod()) {
-                    case Constants
-                            .RESPONSE_METHOD_NEW_CHANNEL:
+                    case Constants.RESPONSE_METHOD_NEW_CHANNEL:
                         // 收到发起新connection的请求
                         RegisterChannelMessage rcm = JSON.parseObject(ms.getContent(), RegisterChannelMessage.class);
                         IoCopy ioCopy = new IoCopy(config, rcm.getId());

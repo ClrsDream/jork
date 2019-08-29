@@ -1,5 +1,6 @@
 package com.xiaoteng.jork.server.channel;
 
+import java.util.HashMap;
 import java.util.Map;
 
 /**
@@ -7,9 +8,9 @@ import java.util.Map;
  */
 public class ChannelTable {
 
-    private static Map<Integer, Channel> table;
+    private static Map<Integer, Channel> table = new HashMap<>();
 
-    private static Map<Integer, Integer> clientMap;
+    private static Map<Integer, Integer> clientMap = new HashMap<>();
 
     public synchronized static void add(Integer id, Channel channel) {
         table.put(id, channel);

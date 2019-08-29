@@ -1,6 +1,7 @@
 package com.xiaoteng.jork.server.main;
 
 import java.util.ArrayList;
+import java.util.HashMap;
 import java.util.Map;
 
 /**
@@ -8,7 +9,7 @@ import java.util.Map;
  */
 public class RegisterTable {
 
-    private static Map<Integer, ArrayList<Client>> table;
+    private static Map<Integer, ArrayList<Client>> table = new HashMap<>();
 
     public synchronized static void register(Integer port, Client client) {
         ArrayList<Client> clients = getClients(port);

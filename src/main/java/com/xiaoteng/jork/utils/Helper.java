@@ -11,6 +11,9 @@ public class Helper {
 
     public static String getChildDomain(String domain) {
         String[] s = domain.split(".");
+        if (s.length == 0) {
+            return domain;
+        }
         return s[0];
     }
 

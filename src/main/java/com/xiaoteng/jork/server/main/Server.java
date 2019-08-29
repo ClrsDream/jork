@@ -1,5 +1,6 @@
 package com.xiaoteng.jork.server.main;
 
+import com.xiaoteng.jork.server.servers.HttpServer;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 
@@ -24,17 +25,26 @@ public class Server {
      */
     private final static int THREAD_NUM = 10;
 
-    public void run() throws IOException {
+    public void run() {
         // 初始化线程池
         ExecutorService executorService = Executors.newFixedThreadPool(THREAD_NUM);
 
-        ServerSocket ss = new ServerSocket(CLIENT_SERVICE_PORT);
-        log.info("程序开始运行，监听{}端口中...", CLIENT_SERVICE_PORT);
-        while (true) {
-            Socket client = ss.accept();
-            log.info("收到来自客户端的请求");
-            // 提交到线程池里面处理，预防阻塞
-            executorService.submit(new Connection(client));
+        HttpServer httpServer = new HttpServer();
+        executorService.submit(httpServer::listener);
+
+        ServerSocket ss = null;
+        try {
+            ss = new ServerSocket(CLIENT_SERVICE_PORT);
+            log.info("程序开始运行，监听{}端口中...", CLIENT_SERVICE_PORT);
+
+            while (true) {
+                Socket client = ss.accept();
+                log.info("新的jork客户端的请求");
+                // 提交到线程池里面处理，预防阻塞
+                executorService.submit(new Connection(client));
+            }
+        } catch (IOException e) {
+            e.printStackTrace();
         }
     }
 
