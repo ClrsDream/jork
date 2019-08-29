@@ -26,7 +26,7 @@ public class TransportServer implements Runnable {
         ExecutorService executorService = Executors.newFixedThreadPool(10);
         try {
             ServerSocket ss = new ServerSocket(PORT);
-            log.info("开始监听{}", PORT);
+            log.info("开始监听{}...", PORT);
             while (true) {
                 Socket socket = ss.accept();
                 executorService.submit(() -> {
@@ -48,12 +48,12 @@ public class TransportServer implements Runnable {
                         JorkTransportClientsStorage.add(registerChannelMessage.getId(), socket);
 
                         // 开始监听
-                        int c;
                         Socket localClient = LocalClientsStorage.get(registerChannelMessage.getId());
-                        BufferedWriter bufferedWriter = new BufferedWriter(new OutputStreamWriter(localClient.getOutputStream()));
-                        while ((c = bufferedReader.read()) != -1) {
-                            bufferedWriter.write(c);
-                            bufferedWriter.flush();
+                        PrintWriter printWriter = new PrintWriter(localClient.getOutputStream());
+                        while ((s = bufferedReader.readLine()) != null) {
+                            log.info("收到来自transportClient的消息 {}", s);
+                            printWriter.println(s);
+                            printWriter.flush();
                         }
                     } catch (IOException e) {
                         e.printStackTrace();

@@ -54,6 +54,7 @@ public class HttpServer {
                         }
                         // 将当前连接存储在本地
                         LocalClientsStorage.add(socket.hashCode(), socket);
+
                         // 判断当前的连接是否关联了jorkTransportClient
                         Socket jorkTransportClient = JorkTransportClientsStorage.get(socket.hashCode());
                         if (jorkTransportClient == null) {
@@ -91,11 +92,12 @@ public class HttpServer {
                         // 接下来需要监听双方的写入事件，并做同步写入操作
                         log.info("关联通道已建立成功，开启同步写入...");
                         BufferedReader bufferedReader = new BufferedReader(new InputStreamReader(socket.getInputStream()));
-                        BufferedWriter bufferedWriter = new BufferedWriter(new OutputStreamWriter(jorkTransportClient.getOutputStream()));
-                        int c;
-                        while ((c = bufferedReader.read()) != -1) {
-                            bufferedWriter.write(c);
-                            bufferedWriter.flush();
+                        PrintWriter printWriter = new PrintWriter(jorkTransportClient.getOutputStream());
+                        String s;
+                        while ((s = bufferedReader.readLine()) != null) {
+                            log.info("收到来自localClient的消息 {}", s);
+                            printWriter.println(s);
+                            printWriter.flush();
                         }
                     } catch (IOException | InterruptedException e) {
                         e.printStackTrace();

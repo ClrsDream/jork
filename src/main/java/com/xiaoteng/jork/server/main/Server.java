@@ -33,9 +33,12 @@ public class Server {
         HttpServer httpServer = new HttpServer();
         executorService.submit(httpServer::listener);
 
+        // transport服务
+        executorService.submit(new TransportServer());
+
         try {
             ServerSocket ss = new ServerSocket(CLIENT_SERVICE_PORT);
-            log.info("程序开始运行，监听{}端口中...", CLIENT_SERVICE_PORT);
+            log.info("程序开始运行，监听{}...", CLIENT_SERVICE_PORT);
 
             while (true) {
                 Socket client = ss.accept();
