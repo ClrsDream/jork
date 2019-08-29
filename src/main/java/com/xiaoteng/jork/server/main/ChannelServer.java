@@ -1,10 +1,11 @@
 package com.xiaoteng.jork.server.main;
 
 import com.alibaba.fastjson.JSON;
+import com.xiaoteng.jork.constants.Constants;
+import com.xiaoteng.jork.messages.ActionMessage;
+import com.xiaoteng.jork.messages.RegisterChannelMessage;
 import com.xiaoteng.jork.server.channel.Channel;
 import com.xiaoteng.jork.server.channel.ChannelTable;
-import com.xiaoteng.jork.server.messages.request.ActionMessage;
-import com.xiaoteng.jork.server.messages.request.NewChannelMessage;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 
@@ -57,9 +58,9 @@ public class ChannelServer {
                         if (userClientId == 0) {
                             // 未注册，那么就将当前的client注册
                             ActionMessage actionMessage = JSON.parseObject(line, ActionMessage.class);
-                            if ("new_channel".equals(actionMessage.getActionMethod())) {
-                                NewChannelMessage newChannelMessage = JSON.parseObject(actionMessage.getContent(), NewChannelMessage.class);
-                                ChannelTable.registerClient(clientId, newChannelMessage.getId());
+                            if (Constants.RESPONSE_METHOD_NEW_CHANNEL.equals(actionMessage.getMethod())) {
+                                RegisterChannelMessage rcm = JSON.parseObject(actionMessage.getContent(), RegisterChannelMessage.class);
+                                ChannelTable.registerClient(clientId, rcm.getId());
                             }
                         } else {
                             // 已注册，直接写入

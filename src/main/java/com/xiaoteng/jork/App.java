@@ -22,7 +22,7 @@ public class App {
 //        String model = System.getProperty("jork.run.model");
 //        String configPath = System.getProperty("jork.client.config");
         Client client = new Client();
-        client.run("/Users/xiaoteng/java/jork/config.json");
+        client.run("/Users/xiaoteng/IdeaProjects/jork/config.json");
 //        if (model == null || model.isEmpty()){
 //            System.out.println("请指定运行模式，es: -Djork.run.model=server");
 //            System.exit(1);

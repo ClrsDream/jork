@@ -2,20 +2,17 @@ package com.xiaoteng.jork.server.servers;
 
 import com.alibaba.fastjson.JSON;
 import com.xiaoteng.jork.constants.Constants;
+import com.xiaoteng.jork.messages.ActionMessage;
+import com.xiaoteng.jork.messages.RegisterChannelMessage;
 import com.xiaoteng.jork.server.channel.Channel;
 import com.xiaoteng.jork.server.channel.ChannelTable;
 import com.xiaoteng.jork.server.main.Client;
 import com.xiaoteng.jork.server.main.RegisterTable;
-import com.xiaoteng.jork.server.messages.response.NewChannelMessage;
-import com.xiaoteng.jork.server.messages.response.ResponseMessage;
 import com.xiaoteng.jork.utils.Helper;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 
-import java.io.BufferedReader;
-import java.io.IOException;
-import java.io.InputStreamReader;
-import java.io.PrintWriter;
+import java.io.*;
 import java.net.ServerSocket;
 import java.net.Socket;
 import java.util.ArrayList;
@@ -68,8 +65,8 @@ public class HttpServer {
                             ChannelTable.add(id, c);
 
                             // 写入消息
-                            NewChannelMessage ncm = new NewChannelMessage(id);
-                            ResponseMessage rm = new ResponseMessage(Constants.RESPONSE_METHOD_NEW_CHANNEL, JSON.toJSONString(ncm));
+                            RegisterChannelMessage rcm = new RegisterChannelMessage(id);
+                            ActionMessage rm = new ActionMessage(Constants.RESPONSE_METHOD_NEW_CHANNEL, JSON.toJSONString(rcm));
                             try {
                                 PrintWriter printWriter = new PrintWriter(client.getSocket().getOutputStream());
                                 String m = JSON.toJSONString(rm);
@@ -107,10 +104,10 @@ public class HttpServer {
                         if (isContinue) {
                             // 兼容来自用户的请求数据并写入到先关联的客户端
                             BufferedReader bufferedReader = new BufferedReader(new InputStreamReader(socket.getInputStream()));
-                            String line;
-                            PrintWriter printWriter = new PrintWriter(channel.getClientSocket().getOutputStream());
-                            if ((line = bufferedReader.readLine()) != null) {
-                                printWriter.println(line);
+                            int c;
+                            BufferedWriter bufferedWriter = new BufferedWriter(new OutputStreamWriter(channel.getClientSocket().getOutputStream()));
+                            if ((c = bufferedReader.read()) != -1) {
+                                bufferedWriter.write(c);
                             }
                         }
 

@@ -1,4 +1,4 @@
-package com.xiaoteng.jork.server.messages.request;
+package com.xiaoteng.jork.messages;
 
 import com.alibaba.fastjson.annotation.JSONField;
 
