@@ -15,13 +15,11 @@ import java.io.IOException;
 import java.io.InputStreamReader;
 import java.io.PrintWriter;
 import java.net.Socket;
-import java.util.concurrent.ExecutorService;
-import java.util.concurrent.Executors;
 
 public class ClientServer {
 
     private final static Logger log = LogManager.getLogger(ClientServer.class);
-    private final static int THREAD_NUM = 10;
+
     private Config config;
 
     public ClientServer(Config config) {
@@ -29,8 +27,6 @@ public class ClientServer {
     }
 
     public void run() {
-        ExecutorService executorService = Executors.newFixedThreadPool(THREAD_NUM);
-
         Socket c = null;
         try {
             c = new Socket(this.config.getServer_host(), this.config.getServer_port());
@@ -75,7 +71,7 @@ public class ClientServer {
                         channel.run();
                         break;
                     default:
-                        log.warn("method{}不支持", ms.getMethod());
+                        log.warn("method[{}]不支持", ms.getMethod());
                 }
             }
             System.out.println("服务端已断开");

@@ -1,6 +1,8 @@
 package com.xiaoteng.jork.server.auth;
 
 /**
+ * Authentication
+ *
  * @author xiaoteng
  */
 public class Auth {

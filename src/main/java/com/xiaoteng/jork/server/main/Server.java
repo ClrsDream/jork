@@ -38,7 +38,7 @@ public class Server {
 
         try {
             ServerSocket ss = new ServerSocket(CLIENT_SERVICE_PORT);
-            log.info("程序开始运行，监听{}...", CLIENT_SERVICE_PORT);
+            log.info("程序开始运行，监听{}端口...", CLIENT_SERVICE_PORT);
 
             while (true) {
                 Socket client = ss.accept();

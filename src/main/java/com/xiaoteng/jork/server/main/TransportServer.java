@@ -29,7 +29,7 @@ public class TransportServer implements Runnable {
         ExecutorService executorService = Executors.newFixedThreadPool(10);
         try {
             ServerSocket ss = new ServerSocket(PORT);
-            log.info("开始监听{}...", PORT);
+            log.info("监听{}端口...", PORT);
             while (true) {
                 Socket socket = ss.accept();
                 executorService.submit(() -> {
@@ -37,12 +37,12 @@ public class TransportServer implements Runnable {
                         BufferedReader bufferedReader = new BufferedReader(new InputStreamReader(socket.getInputStream()));
                         String s = bufferedReader.readLine();
                         if (!JSON.isValid(s)) {
-                            log.info("无效的Json字符{}", s);
+                            log.info("无效的Json字符 {}", s);
                             return;
                         }
                         ActionMessage actionMessage = JSON.parseObject(s, ActionMessage.class);
                         if (!Constants.RESPONSE_METHOD_NEW_CHANNEL.equals(actionMessage.getMethod())) {
-                            log.info("当前方法不支持{}", actionMessage);
+                            log.info("当前方法不支持 {}", actionMessage);
                             return;
                         }
 

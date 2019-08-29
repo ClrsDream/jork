@@ -4,6 +4,8 @@ import java.io.*;
 import java.net.Socket;
 
 /**
+ * 一些辅助函数
+ *
  * @author xiaoteng
  */
 public class Helper {
@@ -26,6 +28,13 @@ public class Helper {
         return sb.toString();
     }
 
+    /**
+     * io复制
+     *
+     * @param fromSocket Socket
+     * @param toSocket   Socket
+     * @throws IOException
+     */
     public static void ioCopy(Socket fromSocket, Socket toSocket) throws IOException {
         BufferedReader bufferedReader = new BufferedReader(new InputStreamReader(fromSocket.getInputStream()));
         BufferedWriter bufferedWriter = new BufferedWriter(new OutputStreamWriter(toSocket.getOutputStream()));
