@@ -6,10 +6,13 @@ import com.xiaoteng.jork.messages.ActionMessage;
 import com.xiaoteng.jork.messages.RegisterChannelMessage;
 import com.xiaoteng.jork.server.storage.JorkTransportClientsStorage;
 import com.xiaoteng.jork.server.storage.LocalClientsStorage;
+import com.xiaoteng.jork.utils.Helper;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 
-import java.io.*;
+import java.io.BufferedReader;
+import java.io.IOException;
+import java.io.InputStreamReader;
 import java.net.ServerSocket;
 import java.net.Socket;
 import java.util.concurrent.ExecutorService;
@@ -49,12 +52,7 @@ public class TransportServer implements Runnable {
 
                         // 开始监听
                         Socket localClient = LocalClientsStorage.get(registerChannelMessage.getId());
-                        PrintWriter printWriter = new PrintWriter(localClient.getOutputStream());
-                        while ((s = bufferedReader.readLine()) != null) {
-                            log.info("收到来自transportClient的消息 {}", s);
-                            printWriter.println(s);
-                            printWriter.flush();
-                        }
+                        Helper.ioCopy(socket, localClient);
                     } catch (IOException e) {
                         e.printStackTrace();
                     }

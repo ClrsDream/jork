@@ -8,10 +8,12 @@ import com.xiaoteng.jork.server.main.JorkClient;
 import com.xiaoteng.jork.server.storage.JorkClientsStorage;
 import com.xiaoteng.jork.server.storage.JorkTransportClientsStorage;
 import com.xiaoteng.jork.server.storage.LocalClientsStorage;
+import com.xiaoteng.jork.utils.Helper;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 
-import java.io.*;
+import java.io.IOException;
+import java.io.PrintWriter;
 import java.net.ServerSocket;
 import java.net.Socket;
 import java.util.concurrent.ExecutorService;
@@ -91,14 +93,7 @@ public class HttpServer {
                         // 到这里，本次的conn与jorkClient的conn已成功关联
                         // 接下来需要监听双方的写入事件，并做同步写入操作
                         log.info("关联通道已建立成功，开启同步写入...");
-                        BufferedReader bufferedReader = new BufferedReader(new InputStreamReader(socket.getInputStream()));
-                        PrintWriter printWriter = new PrintWriter(jorkTransportClient.getOutputStream());
-                        String s;
-                        while ((s = bufferedReader.readLine()) != null) {
-                            log.info("收到来自localClient的消息 {}", s);
-                            printWriter.println(s);
-                            printWriter.flush();
-                        }
+                        Helper.ioCopy(socket, jorkTransportClient);
                     } catch (IOException | InterruptedException e) {
                         e.printStackTrace();
                     }
