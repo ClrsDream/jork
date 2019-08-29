@@ -14,7 +14,13 @@ public class ClientRegisterMessage {
     private Integer port;
 
     @JSONField(name = "protocol")
-    private String protocol;
+    private String[] protocol;
+
+    public ClientRegisterMessage(String domain, Integer port, String[] protocol) {
+        this.domain = domain;
+        this.port = port;
+        this.protocol = protocol;
+    }
 
     public String getDomain() {
         return domain;
@@ -32,11 +38,11 @@ public class ClientRegisterMessage {
         this.port = port;
     }
 
-    public String getProtocol() {
+    public String[] getProtocol() {
         return protocol;
     }
 
-    public void setProtocol(String protocol) {
+    public void setProtocol(String[] protocol) {
         this.protocol = protocol;
     }
 }

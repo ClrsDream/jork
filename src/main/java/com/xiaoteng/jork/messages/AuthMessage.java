@@ -13,6 +13,11 @@ public class AuthMessage {
     @JSONField(name = "password")
     private String password;
 
+    public AuthMessage(String username, String password) {
+        this.username = username;
+        this.password = password;
+    }
+
     public String getUsername() {
         return username;
     }
