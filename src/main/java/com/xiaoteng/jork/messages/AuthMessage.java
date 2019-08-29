@@ -1,4 +1,4 @@
-package com.xiaoteng.jork.server.messages.request;
+package com.xiaoteng.jork.messages;
 
 import com.alibaba.fastjson.annotation.JSONField;
 
@@ -12,6 +12,11 @@ public class AuthMessage {
 
     @JSONField(name = "password")
     private String password;
+
+    public AuthMessage(String username, String password) {
+        this.username = username;
+        this.password = password;
+    }
 
     public String getUsername() {
         return username;

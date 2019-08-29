@@ -1,0 +1,15 @@
+{
+  "address": "127.0.0.1",
+  "port": 8003,
+  "domain": "localhost",
+  "listen_port": 80,
+  "protocol": [
+    "http",
+    "https"
+  ],
+  "username": "xiaoteng",
+  "password": "password",
+  "server_host": "0.0.0.0",
+  "server_port": 5590,
+  "server_transport_port": 5591
+}

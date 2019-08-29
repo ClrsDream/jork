@@ -28,6 +28,28 @@ public class Config {
     @JSONField
     private int server_port;
 
+    @JSONField
+    private int listen_port;
+
+    @JSONField
+    private int server_transport_port;
+
+    public int getServer_transport_port() {
+        return server_transport_port;
+    }
+
+    public void setServer_transport_port(int server_transport_port) {
+        this.server_transport_port = server_transport_port;
+    }
+
+    public int getListen_port() {
+        return listen_port;
+    }
+
+    public void setListen_port(int listen_port) {
+        this.listen_port = listen_port;
+    }
+
     public int getPort() {
         return port;
     }

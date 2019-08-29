@@ -7,9 +7,9 @@ import java.net.Socket;
  *
  * @author xiaoteng
  */
-public class Client {
+public class JorkClient {
 
-    private String protocol;
+    private String[] protocol;
 
     private Integer port;
 
@@ -17,18 +17,18 @@ public class Client {
 
     private Socket socket;
 
-    public Client(String protocol, Integer port, String domain, Socket socket) {
+    public JorkClient(String[] protocol, Integer port, String domain, Socket socket) {
         this.protocol = protocol;
         this.port = port;
         this.domain = domain;
         this.socket = socket;
     }
 
-    public String getProtocol() {
+    public String[] getProtocol() {
         return protocol;
     }
 
-    public void setProtocol(String protocol) {
+    public void setProtocol(String[] protocol) {
         this.protocol = protocol;
     }
 

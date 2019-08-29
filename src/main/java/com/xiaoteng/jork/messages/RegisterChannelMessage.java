@@ -1,11 +1,15 @@
-package com.xiaoteng.jork.client.messages.request;
+package com.xiaoteng.jork.messages;
 
 import com.alibaba.fastjson.annotation.JSONField;
 
-public class NewChannelMessage {
+public class RegisterChannelMessage {
 
     @JSONField
     private int id;
+
+    public RegisterChannelMessage(int id) {
+        this.id = id;
+    }
 
     public int getId() {
         return id;

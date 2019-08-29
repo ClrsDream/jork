@@ -1,11 +1,11 @@
-package com.xiaoteng.jork.server.messages.request;
+package com.xiaoteng.jork.messages;
 
 import com.alibaba.fastjson.annotation.JSONField;
 
 /**
  * @author xiaoteng
  */
-public class RegisterMessage {
+public class ClientRegisterMessage {
 
     @JSONField(name = "domain")
     private String domain;
@@ -14,7 +14,13 @@ public class RegisterMessage {
     private Integer port;
 
     @JSONField(name = "protocol")
-    private String protocol;
+    private String[] protocol;
+
+    public ClientRegisterMessage(String domain, Integer port, String[] protocol) {
+        this.domain = domain;
+        this.port = port;
+        this.protocol = protocol;
+    }
 
     public String getDomain() {
         return domain;
@@ -32,11 +38,11 @@ public class RegisterMessage {
         this.port = port;
     }
 
-    public String getProtocol() {
+    public String[] getProtocol() {
         return protocol;
     }
 
-    public void setProtocol(String protocol) {
+    public void setProtocol(String[] protocol) {
         this.protocol = protocol;
     }
 }

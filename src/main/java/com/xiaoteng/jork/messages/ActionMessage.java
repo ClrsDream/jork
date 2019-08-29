@@ -1,14 +1,19 @@
-package com.xiaoteng.jork.client.messages.request;
+package com.xiaoteng.jork.messages;
 
 import com.alibaba.fastjson.annotation.JSONField;
 
-public class RequestMessage {
+public class ActionMessage {
 
     @JSONField
     private String method;
 
     @JSONField
     private String content;
+
+    public ActionMessage(String method, String content) {
+        this.method = method;
+        this.content = content;
+    }
 
     public String getMethod() {
         return method;

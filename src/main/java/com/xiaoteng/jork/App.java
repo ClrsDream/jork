@@ -20,9 +20,10 @@ public class App {
 
     public static void main(String[] args) throws IOException {
         System.out.println(JORK);
+        // 服务端运行模式
         String model = System.getProperty("jork.run.model");
         String configPath = System.getProperty("jork.client.config");
-        if (model == null || model.isEmpty()){
+        if (model == null || model.isEmpty()) {
             System.out.println("请指定运行模式，es: -Djork.run.model=server");
             System.exit(1);
         }

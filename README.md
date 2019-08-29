@@ -16,6 +16,14 @@ java -Djork.run.model=server -cp ./target/jork-1.0-SNAPSHOT.jar com.xiaoteng.jor
 java -Djork.run.model=client -Djork.client.config=/home/xiaoteng/jork.json -cp ./target/jork-1.0-SNAPSHOT.jar com.xiaoteng.jork.App
 ```
 
+### 功能
+
++ [x] 80端口内网穿透
++ [ ] 443端口内网穿透
++ [ ] Auth集成MySQL,Redis的Authentication验证
++ [ ] ssl加密传输
++ [ ] TCP连接池提高性能
+
 ### 协议
 
 本软件遵循 **MIT** 协议。
