@@ -7,6 +7,7 @@ import com.xiaoteng.jork.messages.AuthMessage;
 import com.xiaoteng.jork.messages.AuthResultMessage;
 import com.xiaoteng.jork.messages.ClientRegisterMessage;
 import com.xiaoteng.jork.server.auth.Auth;
+import com.xiaoteng.jork.server.storage.JorkClientsStorage;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 
@@ -69,7 +70,7 @@ public class NewJorkConnection implements Runnable {
                             // 将当前的connection注册到注册表中
                             JorkClient client = new JorkClient(rm.getProtocol(), rm.getPort(), rm.getDomain(), this.socket);
                             log.info("将当前connection注册到注册表中");
-                            // todo 记录当前的连接
+                            JorkClientsStorage.add(client);
                         }
                         break;
                     default:
