@@ -19,13 +19,13 @@ import java.net.Socket;
 /**
  * @author xiaoteng
  */
-public class Connection implements Runnable {
+public class NewJorkConnection implements Runnable {
 
-    private final static Logger log = LogManager.getLogger(Connection.class);
+    private final static Logger log = LogManager.getLogger(NewJorkConnection.class);
 
     private Socket socket;
 
-    Connection(Socket socket) {
+    NewJorkConnection(Socket socket) {
         this.socket = socket;
     }
 
@@ -67,9 +67,9 @@ public class Connection implements Runnable {
                             // 登录之后才可以操作
                             ClientRegisterMessage rm = JSON.parseObject(actionMessage.getContent(), ClientRegisterMessage.class);
                             // 将当前的connection注册到注册表中
-                            Client client = new Client(rm.getProtocol(), rm.getPort(), rm.getDomain(), this.socket);
+                            JorkClient client = new JorkClient(rm.getProtocol(), rm.getPort(), rm.getDomain(), this.socket);
                             log.info("将当前connection注册到注册表中");
-                            RegisterTable.register(client.getPort(), client);
+                            // todo 记录当前的连接
                         }
                         break;
                     default:
