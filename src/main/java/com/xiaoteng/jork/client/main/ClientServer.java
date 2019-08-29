@@ -63,7 +63,7 @@ public class ClientServer {
                     case Constants.METHOD_AUTH_RESULT:
                         // 发送客户端注册信息
                         log.info("正在将jork客户端信息注册到jork服务端...");
-                        ClientRegisterMessage clientRegisterMessage = new ClientRegisterMessage(config.getDomain(), config.getPort(), config.getProtocol());
+                        ClientRegisterMessage clientRegisterMessage = new ClientRegisterMessage(config.getDomain(), config.getListen_port(), config.getProtocol());
                         ActionMessage actionMessage1 = new ActionMessage(Constants.METHOD_REGISTER, JSON.toJSONString(clientRegisterMessage));
                         printWriter.println(JSON.toJSONString(actionMessage1));
                         printWriter.flush();
