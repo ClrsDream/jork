@@ -3,6 +3,7 @@ package com.xiaoteng.jork.server.main;
 import com.alibaba.fastjson.JSON;
 import com.xiaoteng.jork.constants.Constants;
 import com.xiaoteng.jork.messages.ActionMessage;
+import com.xiaoteng.jork.messages.ChannelRegisteredMessage;
 import com.xiaoteng.jork.messages.RegisterChannelMessage;
 import com.xiaoteng.jork.server.storage.JorkTransportClientsStorage;
 import com.xiaoteng.jork.server.storage.LocalClientsStorage;
@@ -46,6 +47,8 @@ public class TransportServer implements Runnable {
                         // 注册Socket
                         RegisterChannelMessage registerChannelMessage = JSON.parseObject(actionMessage.getContent(), RegisterChannelMessage.class);
                         JorkTransportClientsStorage.add(registerChannelMessage.getId(), socket);
+                        // 会写消息，告知jorkClient的channel注册成功
+                        ChannelRegisteredMessage channelRegisteredMessage = new ChannelRegisteredMessage(registerChannelMessage.getId());
 
                         // 开始监听
                         Socket localClient = LocalClientsStorage.get(registerChannelMessage.getId());

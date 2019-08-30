@@ -19,4 +19,7 @@ public class Constants {
     // jork client register
     public final static String METHOD_REGISTER = "register";
 
+    // channel注册成功
+    public final static String METHOD_CHANNEL_REGISTERED = "channel_registered";
+
 }
