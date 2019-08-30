@@ -1,6 +1,7 @@
 package com.xiaoteng.jork;
 
 import com.xiaoteng.jork.client.main.Client;
+import com.xiaoteng.jork.server.main.Server;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 
@@ -19,8 +20,8 @@ public class App {
 
     public static void main(String[] args) throws IOException {
         System.out.println(JORK);
-        Client client = new Client();
-        client.run("/Users/xiaoteng/IdeaProjects/jork/config.json");
+        Server server = new Server();
+        server.run();
 //        // 服务端运行模式
 //        String model = System.getProperty("jork.run.model");
 //        String configPath = System.getProperty("jork.client.config");
