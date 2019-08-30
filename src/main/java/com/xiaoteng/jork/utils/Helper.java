@@ -1,7 +1,10 @@
 package com.xiaoteng.jork.utils;
 
 import com.alibaba.fastjson.JSON;
+import com.xiaoteng.jork.client.main.Channel;
 import com.xiaoteng.jork.messages.ActionMessage;
+import org.apache.logging.log4j.LogManager;
+import org.apache.logging.log4j.Logger;
 
 import java.io.*;
 import java.net.Socket;
@@ -12,14 +15,7 @@ import java.net.Socket;
  * @author xiaoteng
  */
 public class Helper {
-
-    public static String getChildDomain(String domain) {
-        String[] s = domain.split(".");
-        if (s.length == 0) {
-            return domain;
-        }
-        return s[0];
-    }
+    private final static Logger log = LogManager.getLogger(Channel.class);
 
     public static String fileGetContent(String path) throws IOException {
         BufferedReader bufferedReader = new BufferedReader(new FileReader(path));
@@ -51,6 +47,7 @@ public class Helper {
     public static <T> void sendMessage(String method, T t, Socket socket) throws IOException {
         ActionMessage actionMessage = new ActionMessage(method, JSON.toJSONString(t));
         String s = JSON.toJSONString(actionMessage);
+        log.info("待发送消息 {}", s);
         PrintWriter printWriter = new PrintWriter(socket.getOutputStream());
         printWriter.println(s);
         printWriter.flush();
