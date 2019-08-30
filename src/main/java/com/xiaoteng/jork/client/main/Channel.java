@@ -34,13 +34,9 @@ public class Channel {
             // 发起transportClient
             Thread t1 = new Thread(() -> {
                 try {
-                    PrintWriter printWriter = new PrintWriter(transportClient.getOutputStream());
                     RegisterChannelMessage registerChannelMessage = new RegisterChannelMessage(id);
-                    ActionMessage actionMessage = new ActionMessage(Constants.RESPONSE_METHOD_NEW_CHANNEL, JSON.toJSONString(registerChannelMessage));
-                    String s = JSON.toJSONString(actionMessage);
-                    log.info("发起新的transport连接 {}", s);
-                    printWriter.println(s);
-                    printWriter.flush();
+                    log.info("发起新的transport连接 {}", registerChannelMessage);
+                    Helper.sendMessage(Constants.RESPONSE_METHOD_NEW_CHANNEL, registerChannelMessage, transportClient);
 
                     // 监听
                     Helper.ioCopy(transportClient, localClient);
