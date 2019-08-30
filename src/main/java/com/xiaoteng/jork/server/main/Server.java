@@ -16,18 +16,22 @@ import java.util.concurrent.Executors;
 public class Server {
 
     private final static Logger log = LogManager.getLogger(Server.class);
+
     /**
      * 监听的服务端口
      */
     private final static int CLIENT_SERVICE_PORT = 5590;
+
     /**
      * 线程数量
      */
-    private final static int THREAD_NUM = 10;
+    private final static int THREAD_NUM = 30;
+
+    public static volatile ExecutorService executorService;
 
     public void run() {
         // 初始化线程池
-        ExecutorService executorService = Executors.newFixedThreadPool(THREAD_NUM);
+        executorService = Executors.newFixedThreadPool(THREAD_NUM);
 
         // 监听本地服务
         HttpServer httpServer = new HttpServer();

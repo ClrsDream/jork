@@ -15,8 +15,6 @@ import java.io.IOException;
 import java.io.InputStreamReader;
 import java.net.ServerSocket;
 import java.net.Socket;
-import java.util.concurrent.ExecutorService;
-import java.util.concurrent.Executors;
 
 public class TransportServer implements Runnable {
 
@@ -26,13 +24,12 @@ public class TransportServer implements Runnable {
 
     @Override
     public void run() {
-        ExecutorService executorService = Executors.newFixedThreadPool(10);
         try {
             ServerSocket ss = new ServerSocket(PORT);
             log.info("监听{}端口...", PORT);
             while (true) {
                 Socket socket = ss.accept();
-                executorService.submit(() -> {
+                Server.executorService.submit(() -> {
                     try {
                         BufferedReader bufferedReader = new BufferedReader(new InputStreamReader(socket.getInputStream()));
                         String s = bufferedReader.readLine();
