@@ -2,6 +2,8 @@ package com.xiaoteng.jork.messages;
 
 import com.alibaba.fastjson.annotation.JSONField;
 
+import java.util.Arrays;
+
 /**
  * @author xiaoteng
  */
@@ -44,5 +46,14 @@ public class ClientRegisterMessage {
 
     public void setProtocol(String[] protocol) {
         this.protocol = protocol;
+    }
+
+    @Override
+    public String toString() {
+        return "ClientRegisterMessage{" +
+                "domain='" + domain + '\'' +
+                ", port=" + port +
+                ", protocol=" + Arrays.toString(protocol) +
+                '}';
     }
 }

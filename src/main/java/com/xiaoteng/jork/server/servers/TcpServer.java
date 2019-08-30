@@ -8,26 +8,21 @@ import java.io.IOException;
 import java.net.ServerSocket;
 import java.net.Socket;
 
-/**
- * HTTP监听服务
- *
- * @author xiaoteng
- */
-public class HttpServer implements Runnable {
+public class TcpServer implements Runnable {
 
-    private final static Logger log = LogManager.getLogger(HttpServer.class);
+    private final static Logger log = LogManager.getLogger(TcpServer.class);
 
-    private final static int PORT = 80;
+    private final static int PORT = 5592;
 
     @Override
     public void run() {
-        ServerSocket ss;
+        ServerSocket ss = null;
         try {
             ss = new ServerSocket(PORT);
-            log.info("监听{}端口", PORT);
+            log.info("监听{}端口...", PORT);
             while (true) {
                 Socket socket = ss.accept();
-                log.info("收到新的HTTP连接");
+                log.info("收到新的tcp连接");
                 Server.executorService.submit(new TcpServerHandler(socket));
             }
         } catch (IOException e) {

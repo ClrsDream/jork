@@ -2,12 +2,12 @@ package com.xiaoteng.jork.messages;
 
 import com.alibaba.fastjson.annotation.JSONField;
 
-public class RegisterChannelMessage {
+public class ChannelRegisteredMessage {
 
     @JSONField
     private int id;
 
-    public RegisterChannelMessage(int id) {
+    public ChannelRegisteredMessage(int id) {
         this.id = id;
     }
 
@@ -21,7 +21,7 @@ public class RegisterChannelMessage {
 
     @Override
     public String toString() {
-        return "RegisterChannelMessage{" +
+        return "ChannelRegisteredMessage{" +
                 "id=" + id +
                 '}';
     }
