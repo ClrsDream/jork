@@ -49,6 +49,7 @@ public class TransportServer implements Runnable {
                         JorkTransportClientsStorage.add(registerChannelMessage.getId(), socket);
                         // 会写消息，告知jorkClient的channel注册成功
                         ChannelRegisteredMessage channelRegisteredMessage = new ChannelRegisteredMessage(registerChannelMessage.getId());
+                        Helper.sendMessage(Constants.RESPONSE_METHOD_NEW_CHANNEL, channelRegisteredMessage, socket);
 
                         // 开始监听
                         Socket localClient = LocalClientsStorage.get(registerChannelMessage.getId());

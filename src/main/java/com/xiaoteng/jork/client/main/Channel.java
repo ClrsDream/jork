@@ -1,16 +1,13 @@
 package com.xiaoteng.jork.client.main;
 
-import com.alibaba.fastjson.JSON;
 import com.xiaoteng.jork.client.config.Config;
 import com.xiaoteng.jork.constants.Constants;
-import com.xiaoteng.jork.messages.ActionMessage;
 import com.xiaoteng.jork.messages.RegisterChannelMessage;
 import com.xiaoteng.jork.utils.Helper;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 
 import java.io.IOException;
-import java.io.PrintWriter;
 import java.net.Socket;
 
 public class Channel {

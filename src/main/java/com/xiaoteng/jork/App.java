@@ -1,7 +1,6 @@
 package com.xiaoteng.jork;
 
 import com.xiaoteng.jork.client.main.Client;
-import com.xiaoteng.jork.server.main.Server;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 
