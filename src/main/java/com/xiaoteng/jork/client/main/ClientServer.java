@@ -7,13 +7,13 @@ import com.xiaoteng.jork.messages.ActionMessage;
 import com.xiaoteng.jork.messages.AuthMessage;
 import com.xiaoteng.jork.messages.ClientRegisterMessage;
 import com.xiaoteng.jork.messages.RegisterChannelMessage;
+import com.xiaoteng.jork.utils.Helper;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 
 import java.io.BufferedReader;
 import java.io.IOException;
 import java.io.InputStreamReader;
-import java.io.PrintWriter;
 import java.net.Socket;
 
 public class ClientServer {
@@ -31,15 +31,11 @@ public class ClientServer {
         try {
             c = new Socket(this.config.getServer_host(), this.config.getServer_port());
             System.out.printf("已成功连接到jork服务端%s:%s\n", config.getServer_host(), config.getServer_port());
-            PrintWriter printWriter = new PrintWriter(c.getOutputStream());
 
             // 发送认证消息
             AuthMessage authMessage = new AuthMessage(config.getUsername(), config.getPassword());
-            ActionMessage actionMessage = new ActionMessage(Constants.METHOD_AUTH, JSON.toJSONString(authMessage));
-            String actionMessageStr = JSON.toJSONString(actionMessage);
-            log.info("发送认证信息到jork服务端,内容：{}", actionMessageStr);
-            printWriter.println(actionMessageStr);
-            printWriter.flush();
+            log.info("发送jorkClient认证消息 {}", authMessage);
+            Helper.sendMessage(Constants.METHOD_AUTH, authMessage, c);
 
             BufferedReader bufferedReader = new BufferedReader(new InputStreamReader(c.getInputStream()));
             String s;
@@ -57,12 +53,10 @@ public class ClientServer {
                 ActionMessage ms = JSON.parseObject(s, ActionMessage.class);
                 switch (ms.getMethod()) {
                     case Constants.METHOD_AUTH_RESULT:
-                        // 发送客户端注册信息
-                        log.info("正在将jork客户端信息注册到jork服务端...");
+                        // 发送客户端的注册信息
                         ClientRegisterMessage clientRegisterMessage = new ClientRegisterMessage(config.getDomain(), config.getListen_port(), config.getProtocol());
-                        ActionMessage actionMessage1 = new ActionMessage(Constants.METHOD_REGISTER, JSON.toJSONString(clientRegisterMessage));
-                        printWriter.println(JSON.toJSONString(actionMessage1));
-                        printWriter.flush();
+                        log.info("发送jorkClient注册信息 {}", clientRegisterMessage);
+                        Helper.sendMessage(Constants.METHOD_REGISTER, clientRegisterMessage, c);
                         break;
                     case Constants.RESPONSE_METHOD_NEW_CHANNEL:
                         // 收到发起新connection的请求

@@ -1,5 +1,8 @@
 package com.xiaoteng.jork.utils;
 
+import com.alibaba.fastjson.JSON;
+import com.xiaoteng.jork.messages.ActionMessage;
+
 import java.io.*;
 import java.net.Socket;
 
@@ -43,6 +46,14 @@ public class Helper {
             bufferedWriter.write(c);
             bufferedWriter.flush();
         }
+    }
+
+    public static <T> void sendMessage(String method, T t, Socket socket) throws IOException {
+        ActionMessage actionMessage = new ActionMessage(method, JSON.toJSONString(t));
+        String s = JSON.toJSONString(actionMessage);
+        PrintWriter printWriter = new PrintWriter(socket.getOutputStream());
+        printWriter.println(s);
+        printWriter.flush();
     }
 
 }
