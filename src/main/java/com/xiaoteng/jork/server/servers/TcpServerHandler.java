@@ -16,13 +16,13 @@ import java.io.IOException;
 import java.io.PrintWriter;
 import java.net.Socket;
 
-public class HttpServerHandler implements Runnable {
+public class TcpServerHandler implements Runnable {
 
     private final static Logger log = LogManager.getLogger(HttpServer.class);
 
     private Socket socket;
 
-    public HttpServerHandler(Socket socket) {
+    public TcpServerHandler(Socket socket) {
         this.socket = socket;
     }
 
@@ -30,6 +30,7 @@ public class HttpServerHandler implements Runnable {
     public void run() {
         try {
             // 获取域名
+            log.info("客户端信息 {}", socket.getInetAddress());
             String domain = socket.getInetAddress().getHostName();
             // 查找该域名是否有jorkClient注册
             JorkClient jorkClient = JorkClientsStorage.findByDomain(domain);

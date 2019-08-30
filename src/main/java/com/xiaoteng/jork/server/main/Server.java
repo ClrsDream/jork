@@ -1,6 +1,7 @@
 package com.xiaoteng.jork.server.main;
 
 import com.xiaoteng.jork.server.servers.HttpServer;
+import com.xiaoteng.jork.server.servers.TcpServer;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 
@@ -33,16 +34,17 @@ public class Server {
         // 初始化线程池
         executorService = Executors.newFixedThreadPool(THREAD_NUM);
 
-        // 监听本地服务
-        HttpServer httpServer = new HttpServer();
-        executorService.submit(httpServer::listener);
+        // 监听本地80服务
+        executorService.submit(new HttpServer());
+        // 监听本地tcp服务
+        executorService.submit(new TcpServer());
 
         // transport服务
         executorService.submit(new TransportServer());
 
         try {
             ServerSocket ss = new ServerSocket(CLIENT_SERVICE_PORT);
-            log.info("程序开始运行，监听{}端口...", CLIENT_SERVICE_PORT);
+            log.info("监听{}端口...", CLIENT_SERVICE_PORT);
 
             while (true) {
                 Socket client = ss.accept();
